@@ -94,23 +94,27 @@ class Migrations
             throw new \Exception("Cannot load database configuration");
         }
 
-        ModelMigration::setup($config->database);
+        foreach($config->database as $database)
+        {
+            ModelMigration::setup($database);
 
-        ModelMigration::setSkipAutoIncrement($options['no-ai']);
-        ModelMigration::setMigrationPath($migrationsDir);
+            ModelMigration::setSkipAutoIncrement($options['no-ai']);
+            ModelMigration::setMigrationPath($migrationsDir);
 
-        if ($tableName == 'all') {
-            $migrations = ModelMigration::generateAll($version, $exportData);
-            foreach ($migrations as $tableName => $migration) {
+            if ($tableName == 'all') {
+                $migrations = ModelMigration::generateAll($version, $exportData);
+                foreach ($migrations as $tableName => $migration) {
+                    file_put_contents($migrationsDir.'/'.$version.'/'.$tableName.'.php', '<?php '.PHP_EOL.PHP_EOL.$migration);
+                }
+                $tableName = 'all';
+            } else {
+                $migration = ModelMigration::generate($version, $tableName, $exportData);
                 file_put_contents($migrationsDir.'/'.$version.'/'.$tableName.'.php', '<?php '.PHP_EOL.PHP_EOL.$migration);
             }
-        } else {
-            $migration = ModelMigration::generate($version, $tableName, $exportData);
-            file_put_contents($migrationsDir.'/'.$version.'/'.$tableName.'.php', '<?php '.PHP_EOL.PHP_EOL.$migration);
-        }
 
-        if (self::isConsole()) {
-            print Color::success('Version '.$version.' was successfully generated').PHP_EOL;
+            if (self::isConsole()) {
+                print Color::success('Version '.$version.' was successfully generated').PHP_EOL;
+            }
         }
     }
 
