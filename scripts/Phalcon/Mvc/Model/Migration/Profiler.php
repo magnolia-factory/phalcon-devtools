@@ -21,6 +21,7 @@
 namespace Phalcon\Mvc\Model\Migration;
 
 use Phalcon\Db\Profiler as DbProfiler;
+use Phalcon\Script\Color;
 
 /**
  * Phalcon\Mvc\Model\Migration\Profiler
@@ -40,7 +41,7 @@ class Profiler extends DbProfiler
      */
     public function beforeStartProfile($profile)
     {
-        echo $profile->getInitialTime() , ': ' , str_replace(array( "\n", "\t" ), " ", $profile->getSQLStatement());
+        echo Color::colorize(str_replace(array( "\n", "\t" ), " ", $profile->getSQLStatement()) . PHP_EOL, Color::FG_YELLOW);
     }
 
     /**
@@ -48,6 +49,6 @@ class Profiler extends DbProfiler
      */
     public function afterEndProfile($profile)
     {
-        echo '  => ' , $profile->getFinalTime() , ' (' , ($profile->getTotalElapsedSeconds()) , ')' , PHP_EOL;
+        echo  ' (' , round($profile->getTotalElapsedSeconds(), 4, PHP_ROUND_HALF_UP) , 'sec)' , PHP_EOL;
     }
 }
