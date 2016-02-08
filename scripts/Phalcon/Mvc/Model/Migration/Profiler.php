@@ -41,7 +41,7 @@ class Profiler extends DbProfiler
      */
     public function beforeStartProfile($profile)
     {
-        echo Color::colorize(str_replace(array( "\n", "\t" ), " ", $profile->getSQLStatement()) . PHP_EOL, Color::FG_YELLOW);
+        echo PHP_EOL, Color::colorize(str_replace(array( "\n", "\t" ), " ", $profile->getSQLStatement()) . PHP_EOL, Color::FG_YELLOW);
     }
 
     /**
